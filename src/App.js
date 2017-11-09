@@ -1,32 +1,71 @@
-import React, { Component } from 'react';
-import Home from "./components/Home";
-import { observer } from 'mobx-react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { Route, Link, withRouter } from "react-router-dom";
+import { inject, observer } from "mobx-react";
+import LazyRoute from "lazy-route";
+import DevTools from "mobx-react-devtools";
 
-class App extends Component {
-  render() {
-    const {counter} = this.props;
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">React App Using Mobx</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Home {counter}/>
-        // <p>
-        //   Counter:
-        //   <span className={counter.isOdd ? 'Counter-odd' : 'Counter-even'}> {counter.count} </span>
-        // </p>
-        <p>
-          <button onClick={() => counter.increment()}> + </button>
-          <button onClick={() => counter.decrement()}> - </button>
-        </p>
-      </div>
-    );
-  }
+import TopBar from "./components/TopBar";
+
+@withRouter
+@inject("store")
+@observer
+export default class App extends Component {
+	constructor(props) {
+		super(props);
+		this.store = this.props.store;
+	}
+	componentDidMount() {
+		this.authenticate();
+	}
+	authenticate(e) {
+		if (e) e.preventDefault();
+		this.store.appState.authenticate();
+	}
+	render() {
+		const {
+			authenticated,
+			authenticating,
+			timeToRefresh,
+			refreshToken,
+			testval
+		} = this.store.appState;
+		return (
+			<div className="wrapper">
+				{/*<DevTools />*/}
+				<TopBar />
+
+				<Route
+					exact
+					path="/"
+					render={props => (
+						<LazyRoute {...props} component={import("./components/Home")} />
+					)}
+				/>
+				<Route
+					exact
+					path="/posts"
+					render={props => (
+						<LazyRoute {...props} component={import("./components/SubPage")} />
+					)}
+				/>
+				<Route
+					exact
+					path="/posts/:id"
+					render={props => (
+						<LazyRoute {...props} component={import("./components/SubItem")} />
+					)}
+				/>
+				<Route
+					exact
+					path="/login"
+					render={props => (
+						<LazyRoute {...props} component={import("./components/Login")} />
+					)}
+				/>
+				<footer>
+					{testval}
+				</footer>
+			</div>
+		);
+	}
 }
-
-export default App;

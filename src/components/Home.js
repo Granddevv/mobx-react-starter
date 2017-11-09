@@ -1,17 +1,30 @@
 import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
 
-
+@inject("store")
+@observer
 export default class Home extends Component {
 	constructor(props) {
 		super(props);
-		this.counter = this.props.counter;
+		this.store = this.props.store;
 	}
+
 	render() {
-		const counter = this.counter;
+		const store = this.store;
 		return (
-			<div className="homepage"> Home Page
-				<h1>This is homepage</h1>
-			</div> 
-			);
+
+			<div>
+				<header>
+					<div>
+						<h1>React Mobx APP</h1>
+					</div>
+					<div>
+						<h4>
+							start from create react app.
+						</h4>
+					</div>
+				</header>
+			</div>
+		);
 	}
 }
